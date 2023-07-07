@@ -768,8 +768,7 @@ bool OverlayConnector::processSetCursor()
     }
     else
     {
-        Windows::OrginalApi::SetCursor(arrowCursor_);
-        return true;
+        return false;
     }
 }
 
@@ -1311,7 +1310,16 @@ void OverlayConnector::_onCursorCommand(std::shared_ptr<overlay::CursorCommand>&
         { "IDC_SIZENS", overlay_game::Cursor::SIZENS },
         { "IDC_SIZEWE", overlay_game::Cursor::SIZEWE },
     };
-    cursorShape_ = cursorMap[overlayMsg->cursor];
+
+    if (cursorMap.count(overlayMsg->cursor) != 0)
+    {
+        cursorShape_ = cursorMap[overlayMsg->cursor];
+    }
+    else 
+    {
+        cursorShape_ = overlay_game::Cursor::None;
+    }
+    
 }
 
 void OverlayConnector::_onHotkeyInfo(std::shared_ptr<overlay::HotkeyInfo>& overlayMsg)

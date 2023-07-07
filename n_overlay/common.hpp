@@ -52,8 +52,9 @@ inline bool checkThread(Threads type)
 
 namespace overlay_game
 {
-enum class Cursor: std::uint16_t
+enum class Cursor: std::int16_t
 {
+    None = -1,
     ARROW = 0,
     IBEAM,
     HAND,

@@ -43,7 +43,7 @@ class OverlayConnector : public IIpcClient
     std::uint32_t dragMoveMode_ = HTNOWHERE;
 
     std::int32_t hitTest_ = HTNOWHERE;
-    std::atomic<overlay_game::Cursor> cursorShape_ = overlay_game::Cursor::ARROW;
+    std::atomic<overlay_game::Cursor> cursorShape_ = overlay_game::Cursor::None;
 
     HCURSOR arrowCursor_ = nullptr ;
     HCURSOR ibeamCursor_ = nullptr;
