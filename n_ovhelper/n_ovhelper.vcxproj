@@ -128,8 +128,9 @@
       <LinkIncremental>false</LinkIncremental>
       <OutputFile>$(OutDir)\n_ovhelper.exe</OutputFile>
       <RandomizedBaseAddress>true</RandomizedBaseAddress>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
     <Midl>
       <DefaultCharType>Unsigned</DefaultCharType>
@@ -168,8 +169,9 @@
       <LinkIncremental>false</LinkIncremental>
       <OutputFile>$(OutDir)\n_ovhelper.x64.exe</OutputFile>
       <RandomizedBaseAddress>true</RandomizedBaseAddress>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
     <Midl>
       <DefaultCharType>Unsigned</DefaultCharType>
@@ -205,8 +207,9 @@
       <IgnoreImportLibrary>true</IgnoreImportLibrary>
       <OutputFile>$(OutDir)\n_ovhelper.exe</OutputFile>
       <RandomizedBaseAddress>true</RandomizedBaseAddress>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
     <Midl>
       <DefaultCharType>Unsigned</DefaultCharType>
@@ -242,8 +245,9 @@
       <IgnoreImportLibrary>true</IgnoreImportLibrary>
       <OutputFile>$(OutDir)\n_ovhelper.x64.exe</OutputFile>
       <RandomizedBaseAddress>true</RandomizedBaseAddress>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
     <Midl>
       <DefaultCharType>Unsigned</DefaultCharType>
