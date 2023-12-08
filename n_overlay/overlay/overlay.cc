@@ -148,7 +148,8 @@ void OverlayConnector::sendGraphicsHookInfo(const overlay_game::DxgiHookInfo &in
 
 void OverlayConnector::sendGraphicsWindowSetupInfo(HWND window, int width, int height, bool focus, bool hooked)
 {
-    std::cout << __FUNCTION__ << "hooked: " << hooked << std::endl;
+    LOGGER("n_overlay") << "window: " << window << ", hooked:" << hooked;
+
     CHECK_THREAD(Threads::HookApp);
 
     HookApp::instance()->async([this, window, width, height, focus, hooked]() {

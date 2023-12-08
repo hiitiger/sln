@@ -42,6 +42,8 @@ bool UiApp::trySetupGraphicsWindow(HWND window)
 
     if (session::graphicsWindow() && window != session::graphicsWindow())
     {
+        LOGGER("n_overlay") << "window !=  session::graphicsWindow";
+
         return false;
     }
 
@@ -56,7 +58,11 @@ bool UiApp::trySetupGraphicsWindow(HWND window)
         graphicsWindow_ = nullptr;
     }
 
-    return setup(window);
+    bool res = setup(window);
+
+    LOGGER("n_overlay") << "setup res:" << res;
+
+    return res;
 }
 
 bool UiApp::setup(HWND window)

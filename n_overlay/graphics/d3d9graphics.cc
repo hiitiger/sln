@@ -258,7 +258,7 @@ void D3d9Graphics::freeGraphics()
 
 void D3d9Graphics::beforePresent(IDirect3DDevice9* device)
 {
-    __trace__;
+    // __trace__;
 
     // TRACE_FUNC();
 
@@ -311,7 +311,7 @@ void D3d9Graphics::beforePresent(IDirect3DDevice9* device)
 
 void D3d9Graphics::afterPresent(IDirect3DDevice9* device)
 {
-        __trace__;
+        // __trace__;
 
     if (device_ != device)
     {
