@@ -76,7 +76,7 @@ bool DxAppBase::InitWindow()
         return false;
     }
 
-    RECT rc = { 0, 0, 600, 600 };
+    RECT rc = { 0, 0, 1600, 1200 };
     AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
 
     mWindow = CreateWindowW(L"DX11BookWindowClass", L"Blank Direct3D 11 Window", WS_OVERLAPPEDWINDOW,

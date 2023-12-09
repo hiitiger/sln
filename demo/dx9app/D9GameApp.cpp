@@ -78,8 +78,8 @@ void D9GameApp::runGameLoop()
 
                 lastTime = curTime;
 
-                std::wstring fps = std::to_wstring((long long)_fps.fps()) + L",D9GameWindow";
-                SetWindowTextW(_window, fps.c_str());
+                // std::wstring fps = std::to_wstring((long long)_fps.fps()) + L",D9GameWindow";
+                SetWindowTextW(_window, L"dx11app");
             }
         }
     }
