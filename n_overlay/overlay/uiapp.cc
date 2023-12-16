@@ -451,7 +451,7 @@ LRESULT UiApp::hookWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
         {
 
 #if AUTO_INPUT_INTERCEPT
-            if (!isInterceptingMouseAuto_ && !HookApp::instance()->overlayConnector()->isMousePressingOnOverlayWindow())
+            if (!isInterceptingMouseAuto_ && !HookApp::instance()->isQuitSet() && !HookApp::instance()->overlayConnector()->isMousePressingOnOverlayWindow())
             {
                 return CallWindowProc(oldWndProc_, hWnd, Msg, wParam, lParam);
             }
@@ -541,7 +541,7 @@ LRESULT UiApp::hookGetMsgProc(_In_ int nCode, _In_ WPARAM wParam, _In_ LPARAM lP
                 {
                     
 #if AUTO_INPUT_INTERCEPT
-                    if (!isInterceptingMouseAuto_ && !HookApp::instance()->overlayConnector()->isMousePressingOnOverlayWindow())
+                    if (!isInterceptingMouseAuto_ && !HookApp::instance()->isQuitSet() && !HookApp::instance()->overlayConnector()->isMousePressingOnOverlayWindow())
                     {
                         return CallNextHookEx(msgHook_, nCode, wParam, lParam);
                     }

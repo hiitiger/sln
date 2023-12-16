@@ -74,6 +74,8 @@ void HookApp::initialize()
 
 void HookApp::uninitialize()
 {
+    LOGGER("n_overlay") << "uninit... ";
+
     if (g_hookAppThread)
     {
         HookApp::instance()->quit();
