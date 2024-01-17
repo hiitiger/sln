@@ -257,6 +257,8 @@ result &= g_inputHooks.m_##Function##Hook->activeHook();\
 
 bool InputHook::hook()
 {
+    __trace__;
+
     bool result = true;
     g_hUser32 = LoadLibraryA("user32.dll");
 
@@ -298,6 +300,8 @@ void InputHook::unhook()
 
 void InputHook::saveInputState()
 {
+    __trace__ ;
+
     if (!g_savedInputStatus.inputStateSaved)
     {
         g_savedInputStatus.cursorCount = Windows::OrginalApi::ShowCursor(TRUE);
@@ -331,6 +335,8 @@ void InputHook::saveInputState()
 
 void InputHook::restoreInputState()
 {
+    __trace__ ;
+
     if (g_savedInputStatus.inputStateSaved)
     {
         int curCursorCount = Windows::OrginalApi::ShowCursor(FALSE);
@@ -406,7 +412,7 @@ BOOL Windows::OrginalApi::GetKeyboardState(__out_ecount(256) PBYTE lpKeyState)
 
 INT Windows::OrginalApi::ShowCursor(__in BOOL bShow)
 {
-    LOGGER("n_overlay") << "bShow :" << bShow;
+    // LOGGER("n_overlay") << "bShow :" << bShow;
 
     if (g_inputHooks.m_ShowCursorHook)
     {

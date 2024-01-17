@@ -441,27 +441,19 @@ bool DXGIHook::initGraphics(IDXGISwapChain *swap)
 
     HWND graphicsWindow = swapChainDesc.OutputWindow;
 
-    // if (graphicsWindow != session::graphicsWindow())
-    // {
-    //     if (!session::injectWindow())
-    //     {
-    //         session::setGraphicsWindow(graphicsWindow);
-    //         std::cout << __FUNCTION__ << ", setGraphicsWindow: " << graphicsWindow << std::endl;
-    //     }
-    //     else
-    //     {
-    //         return false;
-    //     }
-    // }
-
-    if (HookApp::instance()->uiapp()->window() != graphicsWindow)
+    if (graphicsWindow != session::graphicsWindow())
     {
-        HookApp::instance()->async([graphicsWindow]() {
-            HookApp::instance()->uiapp()->trySetupGraphicsWindow(graphicsWindow);
-        });
-
         return false;
     }
+
+    // if (HookApp::instance()->uiapp()->window() != graphicsWindow)
+    // {
+    //     HookApp::instance()->async([graphicsWindow]() {
+    //         HookApp::instance()->uiapp()->trySetupGraphicsWindow(graphicsWindow);
+    //     });
+
+    //     return false;
+    // }
 
     session::setGraphicsThreadId(GetCurrentThreadId());
 

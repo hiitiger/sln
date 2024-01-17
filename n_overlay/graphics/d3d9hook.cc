@@ -427,25 +427,17 @@ bool D3d9Hook::initGraphics(IDirect3DDevice9* device, HWND hDestWindowOverride, 
     HWND graphicsWindow = desc.hDeviceWindow;
     if (graphicsWindow != session::graphicsWindow())
     {
-        if (!session::injectWindow())
-        {
-            session::setGraphicsWindow(graphicsWindow);
-            std::cout << __FUNCTION__ << ", setGraphicsWindow: " << graphicsWindow << std::endl;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    if (HookApp::instance()->uiapp()->window() != graphicsWindow)
-    {
-        HookApp::instance()->async([graphicsWindow]() {
-            HookApp::instance()->uiapp()->trySetupGraphicsWindow(graphicsWindow);
-        });
-
         return false;
     }
+
+    // if (HookApp::instance()->uiapp()->window() != graphicsWindow)
+    // {
+    //     HookApp::instance()->async([graphicsWindow]() {
+    //         HookApp::instance()->uiapp()->trySetupGraphicsWindow(graphicsWindow);
+    //     });
+
+    //     return false;
+    // }
 
     session::setGraphicsThreadId(GetCurrentThreadId());
 
@@ -459,6 +451,9 @@ bool D3d9Hook::initGraphics(IDirect3DDevice9* device, HWND hDestWindowOverride, 
 
     session::setGraphicsActive(true);
     session::setIsWindowed(graphics_->isWindowed());
+
+    LOGGER("n_overlay") << "graphicsInit_ d3d9";
+
     return true;
 }
 

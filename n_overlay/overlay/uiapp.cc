@@ -275,6 +275,8 @@ bool UiApp::isInterceptingMouseAuto()
 
 bool UiApp::hookWindow(HWND window)
 {
+    __trace__;
+
     if (g_use_wndproc_hook)
     {
         oldWndProc_ = (WNDPROC)GetWindowLongPtr(window, GWLP_WNDPROC);
@@ -295,6 +297,7 @@ bool UiApp::hookWindow(HWND window)
 
 void UiApp::unhookWindow()
 {
+    __trace__;
     if (g_use_wndproc_hook)
     {
         if (oldWndProc_)

@@ -102,7 +102,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;..\deps\3rd;..\deps\3rd\boost;..\deps\include;..\deps;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\Detours\include;..\deps\3rd;..\deps\3rd\boost;..\deps\include;..\deps;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew /std:c++latest -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>$(SolutionDir)Objdir\$(ProjectName)\$(Configuration)\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -125,7 +125,7 @@
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libMinHook.x86.lib;corelib.x86.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>corelib.x86.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\deps\lib\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -148,7 +148,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;..\deps\3rd;..\deps\3rd\boost;..\deps\include;..\deps;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\Detours\include;..\deps\3rd;..\deps\3rd\boost;..\deps\include;..\deps;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew /std:c++latest -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>$(SolutionDir)Objdir\$(ProjectName)\$(Configuration)\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -171,7 +171,7 @@
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libMinHook.x64.lib;corelib.x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>corelib.x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\deps\lib\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -194,7 +194,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;..\deps\3rd;..\deps\3rd\boost;..\deps\include;..\deps;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\Detours\include;..\deps\3rd;..\deps\3rd\boost;..\deps\include;..\deps;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew /std:c++latest -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>$(SolutionDir)Objdir\$(ProjectName)\$(Configuration)\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -237,7 +237,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;..\deps\3rd;..\deps\3rd\boost;..\deps\include;..\deps;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\Detours\include;..\deps\3rd;..\deps\3rd\boost;..\deps\include;..\deps;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew /std:c++latest -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>$(SolutionDir)Objdir\$(ProjectName)\$(Configuration)\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -479,6 +479,11 @@ echo #include "stable.h"&gt;&gt;stable.h.cpp</Command>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Detours\vc\Detours.vcxproj">
+      <Project>{af219167-4d53-420d-8eb7-c302eabc0b50}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

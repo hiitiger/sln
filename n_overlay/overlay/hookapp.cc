@@ -68,7 +68,6 @@ HookApp::~HookApp()
 
 void HookApp::initialize()
 {
-    MH_Initialize();
     g_hookAppThread = HookApp::start();
 }
 
@@ -85,8 +84,6 @@ void HookApp::uninitialize()
             TerminateThread(g_hookAppThread, 0);
         }
     }
-
-    MH_Uninitialize();
 }
 
 HookApp * HookApp::instance()
@@ -147,8 +144,11 @@ void HookApp::deferHook()
 
 void HookApp::hookThread()
 {
-    LOGGER("n_overlay") << "@trace hook thread start ... ";
+    LOGGER("n_overlay") << "@trace hook thread start ... " << GetCurrentThreadId();
     OutputDebugStringA("n HookAppThread hook thread start");
+
+    hook_init();
+
 
     session::setHookAppThreadId(::GetCurrentThreadId());
 
@@ -191,6 +191,7 @@ void HookApp::hookThread()
 
     hookQuitedEvent_.set();
 
+    hook_uninit();
     LOGGER("n_overlay") << "@trace hook thread exit... ";
 }
 
@@ -256,15 +257,13 @@ bool HookApp::findGameWindow()
     }
     else
     {
-        FindWindowParam param = {0};
-        param.processId = GetCurrentProcessId();
-
-        EnumWindows(findGraphicsWindow, (LPARAM)&param);
-
-        if (param.window)
+        HWND foreGroundWindow = GetForegroundWindow();
+        DWORD processId = 0;
+        GetWindowThreadProcessId(foreGroundWindow, &processId);
+        if (processId == GetCurrentProcessId())
         {
-            LOGGER("n_overlay") << "setGraphicsWindow by enum: " << param.window;
-            session::setGraphicsWindow(param.window);
+            LOGGER("n_overlay") << "setGraphicsWindow by foreGroundWindow: " << foreGroundWindow;
+            session::setGraphicsWindow(foreGroundWindow);
         }
     }
 
@@ -346,7 +345,7 @@ bool HookApp::hookInput()
     {
         session::tryInputHook();
 
-        std::cout << __FUNCTION__ << ", " << session::inputHooked() << std::endl;
+        __trace__ <<  session::inputHooked();
     }
 
     return session::inputHooked();
@@ -358,7 +357,7 @@ bool HookApp::hookD3d9()
     {
         session::tryD3d9Hook();
 
-        std::cout << __FUNCTION__ << ", " << session::d3d9Hooked() << std::endl;
+        __trace__ <<  session::d3d9Hooked();
     }
 
     return session::d3d9Hooked();
@@ -369,9 +368,10 @@ bool HookApp::hookDXGI()
     if (!session::dxgiHooked())
     {
         session::tryDxgiHook();
+
+        __trace__ <<  session::dxgiHooked();
     }
 
-    std::cout << __FUNCTION__ << ", " << session::dxgiHooked() << std::endl;
     return session::dxgiHooked();
 }
 

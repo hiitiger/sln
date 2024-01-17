@@ -136,7 +136,8 @@ bool safeInjectDll(DWORD pid, DWORD threadId, const std::wstring &dll)
     typedef HHOOK(WINAPI * fn)(int, HOOKPROC, HINSTANCE, DWORD);
     HMODULE user32 = GetModuleHandleW(L"USER32");
     fn set_windows_hook_ex;
-    HMODULE lib = LoadLibraryW(dll.c_str());
+    HMODULE lib = LoadLibraryExW(dll.c_str(), NULL, DONT_RESOLVE_DLL_REFERENCES);
+    
     LPVOID proc;
     HHOOK hook;
 

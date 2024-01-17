@@ -3,6 +3,7 @@
 #include "winheader.h"
 
 #include "minhook/MinHook.h"
+#include "detours.h"
 
 
 __pragma(warning(push))
