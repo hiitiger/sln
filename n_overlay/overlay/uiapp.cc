@@ -689,13 +689,13 @@ LRESULT UiApp::hookCallWndRetProc(_In_ int nCode, _In_ WPARAM wParam, _In_ LPARA
 
 bool UiApp::checkHotkey()
 {
-// #if defined(_DEBUG) || defined(DEBUG)
+#if defined(_DEBUG) || defined(DEBUG)
     if (Windows::OrginalApi::GetAsyncKeyState(VK_F1))
     {
         toggleInputIntercept();
         return true;
     }
-// #endif
+#endif
 
 #ifndef HOTKEY_THREADED
     HotkeyCheck::instance()->checkHotkeys();
