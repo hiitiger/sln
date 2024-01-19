@@ -1,4 +1,4 @@
-#pragma once
+    #pragma once
 #include "hook/inputhook.h"
 #include "overlay/hookapp.h"
 #include "overlay/uiapp.h"
@@ -177,7 +177,7 @@ inline void HotkeyCheck::_onHotkeyDown(const std::string& name)
 
     if (session::overlayEnabled())
     {
-        if (name == "overlay.hotkey.toggleInputIntercept")
+        if (name == "overlay.toggle")
         {
             HookApp::instance()->uiapp()->toggleInputIntercept();
         }
