@@ -1,4 +1,4 @@
-    #pragma once
+#pragma once
 #include "hook/inputhook.h"
 #include "overlay/hookapp.h"
 #include "overlay/uiapp.h"
