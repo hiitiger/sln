@@ -13,6 +13,8 @@ struct DXGIHookData
     std::unique_ptr<ApiHook<DXGISwapChainResizeTargetType>> dxgiSwapChainResizeTargetHook_;
     std::unique_ptr<ApiHook<DXGISwapChainPresent1Type>> dxgiSwapChainPresent1Hook_;
     std::unique_ptr<ApiHook<D3D12ExecuteCommandListsType>> d3d12ExecuteCommandListsHook_;
+    std::unique_ptr<ApiHook<DXGIFactoryCreateSwapChain>> createSwapChainHook_;
+
 };
 
 class DxgiGraphics;
@@ -29,6 +31,8 @@ class DXGIHook : public IHookModule, public DXGIHookData
 
     std::unique_ptr<DxgiGraphics> dxgiGraphics_;
     ID3D12CommandQueue* d3d12CommandQueue_ = nullptr;
+
+    Windows::ComPtr<IDXGISwapChain> swapChain_;
 
   public:
     DXGIHook();
@@ -52,6 +56,9 @@ class DXGIHook : public IHookModule, public DXGIHookData
 
     HRESULT STDMETHODCALLTYPE ExecuteCommandLists_hook(ID3D12CommandQueue* queue, UINT NumCommandLists, ID3D12CommandList* const* ppCommandLists);
   
+    HRESULT STDMETHODCALLTYPE CreateSwapChain(IDXGIFactory *, IUnknown *pDevice, DXGI_SWAP_CHAIN_DESC *pDesc, IDXGISwapChain **ppSwapChain);
+
+
 private:
     bool loadLibInProc();
 
@@ -63,6 +70,8 @@ private:
     bool tryHookDXGI();
 
     bool hookSwapChain(Windows::ComPtr<IDXGISwapChain>);
+
+    bool hookCreateSwapChian();
 
   private:
     void onBeforePresent(IDXGISwapChain *);

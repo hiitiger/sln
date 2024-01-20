@@ -31,6 +31,10 @@ HRESULT STDMETHODCALLTYPE H_D3D12ExecuteCommandLists(ID3D12CommandQueue* queue, 
     return session::dxgiHook()->ExecuteCommandLists_hook(queue, NumCommandLists, ppCommandLists);
 }
 
+HRESULT STDMETHODCALLTYPE H_CreateSwapChain(IDXGIFactory * factory, IUnknown *pDevice, DXGI_SWAP_CHAIN_DESC *pDesc, IDXGISwapChain **ppSwapChain)
+{
+    return session::dxgiHook()->CreateSwapChain(factory, pDevice, pDesc, ppSwapChain);
+}
 
 DXGIHook::DXGIHook()
 {
@@ -50,7 +54,14 @@ bool DXGIHook::hook()
 
     tryHookD3D12();
 
-    return tryHookDXGI();
+    bool ret = tryHookDXGI();
+    
+    if (win_utils::applicationProcName() == L"cs2.exe")
+    {
+        hookCreateSwapChian();
+    }
+    
+    return ret;
 }
 
 void DXGIHook::unhook()
@@ -144,6 +155,8 @@ HRESULT STDMETHODCALLTYPE DXGIHook::Present1_hook(IDXGISwapChain1 *pSwapChain, U
 
 HRESULT STDMETHODCALLTYPE DXGIHook::ResizeBuffers_hook(IDXGISwapChain *pSwapChain, UINT BufferCount, UINT Width, UINT Height, DXGI_FORMAT NewFormat, UINT SwapChainFlags)
 {
+    LOGGER("n_overlay") << "pSwapChain: " << pSwapChain << ", BufferCount:" << BufferCount << ", Width:" << Width << ", Height:" << Height << ", NewFormat:" << NewFormat << ", SwapChainFlags:" << SwapChainFlags;
+
     this->onResize(pSwapChain);
 
     return this->dxgiSwapChainResizeBuffersHook_->callOrginal<HRESULT>(pSwapChain, BufferCount, Width, Height, NewFormat, SwapChainFlags);
@@ -151,6 +164,8 @@ HRESULT STDMETHODCALLTYPE DXGIHook::ResizeBuffers_hook(IDXGISwapChain *pSwapChai
 
 HRESULT STDMETHODCALLTYPE DXGIHook::ResizeTarget_hook(IDXGISwapChain *pSwapChain, __in const DXGI_MODE_DESC *pNewTargetParameters)
 {
+    LOGGER("n_overlay") << "pSwapChain: " << pSwapChain;
+
     this->onResize(pSwapChain);
 
     return this->dxgiSwapChainResizeTargetHook_->callOrginal<HRESULT>(pSwapChain, pNewTargetParameters);
@@ -168,6 +183,44 @@ HRESULT STDMETHODCALLTYPE DXGIHook::ExecuteCommandLists_hook(ID3D12CommandQueue*
 
     return this->d3d12ExecuteCommandListsHook_->callOrginal<HRESULT>(queue, NumCommandLists, ppCommandLists);
 }
+
+HRESULT STDMETHODCALLTYPE DXGIHook::CreateSwapChain(IDXGIFactory * factory, IUnknown *pDevice, DXGI_SWAP_CHAIN_DESC *pDesc, IDXGISwapChain **ppSwapChain)
+{
+    LOGGER("n_overlay") << "factory: " << factory << ", pDevice: " << pDevice << ", pDesc: " << pDesc << ", ppSwapChain: " << ppSwapChain;
+    if (pDesc)
+    {
+        LOGGER("n_overlay") << "pDesc->OutputWindow: " << pDesc->OutputWindow << ", width:" << pDesc->BufferDesc.Width << ", height: " << pDesc->BufferDesc.Height;
+    }
+
+    if (pDevice && graphicsInit_ && swapChain_)
+    {
+        Windows::ComPtr<ID3D10Device> device10 = NULL;
+        Windows::ComPtr<ID3D11Device> device11 = NULL;
+        
+        swapChain_->GetDevice(
+            __uuidof(ID3D10Device), (void **)device10.resetAndGetPointerAddress());
+        swapChain_->GetDevice(
+            __uuidof(ID3D11Device), (void **)device11.resetAndGetPointerAddress());
+
+        if (device11 && device11.get() == pDevice)
+        {
+            LOGGER("n_overlay") << "device11 == pDevice, we try to free graphics";
+            uninitGraphics(swapChain_.get());
+        }
+        else if (device10 && device10.get() == pDevice)
+        {
+            LOGGER("n_overlay") << "device10 == pDevice, we try to free graphics";
+            uninitGraphics(swapChain_.get());
+        }
+    }
+
+    auto hr = createSwapChainHook_->callOrginal<HRESULT>(factory, pDevice, pDesc, ppSwapChain);
+
+    LOGGER("n_overlay") << "*ppSwapChain: " << *ppSwapChain;
+
+    return hr;
+}
+
 
 bool DXGIHook::loadLibInProc()
 {
@@ -396,6 +449,29 @@ bool DXGIHook::hookSwapChain(Windows::ComPtr<IDXGISwapChain> pSwapChain)
     return hooked;
 }
 
+bool DXGIHook::hookCreateSwapChian()
+{
+    LOGGER("n_overlay") << "HOOK DxgiCreateSwapChain";
+    auto createfn = (decltype(&CreateDXGIFactory1))GetProcAddress(dxgiModule_, "CreateDXGIFactory1");
+    Windows::ComPtr<IDXGIFactory1> dxgiFactory1;
+    createfn(__uuidof(IDXGIFactory1), (void **)dxgiFactory1.getPointerAdress());
+
+    if (dxgiFactory1 && !createSwapChainHook_)
+    {
+
+        const auto vtable = *reinterpret_cast<uintptr_t ***>(dxgiFactory1.get());
+        DWORD_PTR *source_addr = getVFunctionAddr((DWORD_PTR *)dxgiFactory1.get(), 10);
+        DWORD_PTR *hooked_addr = (DWORD_PTR *)H_CreateSwapChain;
+
+        createSwapChainHook_.reset(new ApiHook<DXGIFactoryCreateSwapChain>(L"DxgiCreateSwapChain", source_addr, hooked_addr));
+        createSwapChainHook_->activeHook();
+        LOGGER("n_overlay") << "HOOK DxgiCreateSwapChain: " << createSwapChainHook_->succeed();
+    }
+
+    return createSwapChainHook_ && createSwapChainHook_->succeed();
+}
+
+
 void DXGIHook::onBeforePresent(IDXGISwapChain *swap)
 {
     if (graphicsInit_)
@@ -446,15 +522,6 @@ bool DXGIHook::initGraphics(IDXGISwapChain *swap)
         return false;
     }
 
-    // if (HookApp::instance()->uiapp()->window() != graphicsWindow)
-    // {
-    //     HookApp::instance()->async([graphicsWindow]() {
-    //         HookApp::instance()->uiapp()->trySetupGraphicsWindow(graphicsWindow);
-    //     });
-
-    //     return false;
-    // }
-
     session::setGraphicsThreadId(GetCurrentThreadId());
 
     Windows::ComPtr<ID3D10Device> device10 = NULL;
@@ -477,7 +544,7 @@ bool DXGIHook::initGraphics(IDXGISwapChain *swap)
             this->dxgiGraphics_ = std::move(graphics);
             graphicsInit_ = true;
 
-            __trace__ << "graphicsInit_ d3d12";
+            __trace__ << "graphicsInit_ d3d12 swap: " << swap;
         }
     }
 
@@ -488,7 +555,7 @@ bool DXGIHook::initGraphics(IDXGISwapChain *swap)
         {
             this->dxgiGraphics_ = std::move(graphics);
             graphicsInit_ = true;
-            __trace__ << "graphicsInit_ d3d11";
+            __trace__ << "graphicsInit_ d3d11 swap: " << swap;
         }
     }
     else if (device10)
@@ -506,6 +573,7 @@ bool DXGIHook::initGraphics(IDXGISwapChain *swap)
 
     if (graphicsInit_)
     {
+        swapChain_ = swap;
         session::setIsWindowed(dxgiGraphics_->isWindowed());
     }
     return graphicsInit_;
@@ -513,8 +581,10 @@ bool DXGIHook::initGraphics(IDXGISwapChain *swap)
 
 void DXGIHook::uninitGraphics(IDXGISwapChain *swap)
 {
-    if (graphicsInit_)
+    __trace__;
+    if (graphicsInit_ && swap == swapChain_)
     {
+        swapChain_ = nullptr;
         dxgiGraphics_->uninitGraphics(swap);
         session::setGraphicsActive(false);
         graphicsInit_ = false;
@@ -523,10 +593,13 @@ void DXGIHook::uninitGraphics(IDXGISwapChain *swap)
 
 void DXGIHook::freeGraphics()
 {
+    __trace__;
+
     if (graphicsInit_)
     {
         dxgiGraphics_->freeGraphics();
         session::setGraphicsActive(false);
         graphicsInit_ = false;
+        swapChain_ = nullptr;
     }
 }
