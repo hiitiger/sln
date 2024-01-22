@@ -3,7 +3,7 @@
 #include "overlay/hookapp.h"
 #include "d3d9hook.h"
 #include "d3d9graphics.h"
-
+#include "common.hpp"
 
 HRESULT STDMETHODCALLTYPE H_Present_hook(IDirect3DDevice9* d, THIS_ CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion)
 {
@@ -449,7 +449,7 @@ bool D3d9Hook::initGraphics(IDirect3DDevice9* device, HWND hDestWindowOverride, 
         return false;
     }
 
-    session::setGraphicsActive(true);
+    session::setGraphicsActive((int)GraphicsType::D3d9);
     session::setIsWindowed(graphics_->isWindowed());
 
     LOGGER("n_overlay") << "graphicsInit_ d3d9";
@@ -464,7 +464,7 @@ void D3d9Hook::uninitGraphics(IDirect3DDevice9* device)
         graphics_->uninitGraphics(device);
         graphicsInit_ = false;
 
-        session::setGraphicsActive(false);
+        session::unsetGraphicsActive();
     }
 }
 
@@ -475,6 +475,6 @@ void D3d9Hook::freeGraphics()
         graphics_->freeGraphics();
         graphicsInit_ = false;
 
-        session::setGraphicsActive(false);
+        session::unsetGraphicsActive();
     }
 }

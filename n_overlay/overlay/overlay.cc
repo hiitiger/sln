@@ -251,10 +251,6 @@ void OverlayConnector::unlockWindows()
     windowsLock_.unlock();
 }
 
-bool OverlayConnector::directMessageInput() const
-{
-    return directMessageInput_;
-}
 
 bool OverlayConnector::processNCHITTEST(UINT /*message*/, WPARAM /*wParam*/, LPARAM lParam, bool isBlockingAll)
 {
@@ -422,15 +418,6 @@ bool OverlayConnector::processMouseMessage(UINT message, WPARAM wParam, LPARAM l
                 }
                 else if (message == WM_LBUTTONUP)
                 {
-                    if (directMessageInput_)
-                    {
-                        POINT mousePointinWindowClient = { mousePointInGameClient.x, mousePointInGameClient.y };
-                        mousePointinWindowClient.x -= window->rect.x;
-                        mousePointinWindowClient.y -= window->rect.y;
-                        DWORD pos = mousePointinWindowClient.x + (mousePointinWindowClient.y << 16);
-                        lParam = (LPARAM)pos;
-                        PostMessage((HWND)window->nativeHandle, message, wParam, lParam);
-                    }
                     clearMouseDrag();
                 }
             }
@@ -468,16 +455,6 @@ bool OverlayConnector::processMouseMessage(UINT message, WPARAM wParam, LPARAM l
             DWORD pos = mousePointinWindowClient.x + (mousePointinWindowClient.y << 16);
             lParam = (LPARAM)pos;
 
-            if (directMessageInput_)
-            {
-                if (message == WM_MOUSEWHEEL)
-                {
-                    DWORD pos = mousePointInGameClient.x + (mousePointInGameClient.y << 16);
-                    lParam = (LPARAM)pos;
-                }
-                PostMessage((HWND) window->nativeHandle, message, wParam, lParam);
-            }
-            else
             {
                 HookApp::instance()->async([this, windowId = window->windowId, message, wParam, lParam]() {
                     _sendGameWindowInput(windowId, message, wParam, lParam);
@@ -587,16 +564,6 @@ bool OverlayConnector::processMouseMessage(UINT message, WPARAM wParam, LPARAM l
                 mousePressWindowId_ = 0;
             }
 
-            if (directMessageInput_)
-            {
-                if (message == WM_MOUSEWHEEL)
-                {
-                    DWORD pos = mousePointInGameClient.x + (mousePointInGameClient.y << 16);
-                    lParam = (LPARAM)pos;
-                }
-                PostMessage((HWND)window->nativeHandle, message, wParam, lParam);
-            }
-            else
             {
                 if (dragMoveWindowId_ == 0)
                 {
@@ -631,10 +598,6 @@ bool OverlayConnector::processMouseMessage(UINT message, WPARAM wParam, LPARAM l
 
     // notify mouse is not accepted
 
-    if (directMessageInput_)
-    {
-    }
-    else
     {
         //todo: modify electron browser view focus state
         if (message == WM_LBUTTONDOWN)
@@ -662,16 +625,9 @@ bool OverlayConnector::processkeyboardMessage(UINT message, WPARAM wParam, LPARA
 {
     if (focusWindowId_ != 0)
     {
-        if (directMessageInput_)
-        {
-            PostMessage((HWND)focusWindow_.load(), message, wParam, lParam);
-        }
-        else
-        {
-            HookApp::instance()->async([this, windowId = focusWindowId_.load(), message, wParam, lParam]() {
-                _sendGameWindowInput(windowId, message, wParam, lParam);
-            });
-        }
+        HookApp::instance()->async([this, windowId = focusWindowId_.load(), message, wParam, lParam]() {
+            _sendGameWindowInput(windowId, message, wParam, lParam);
+        });
         return true;
     }
     else
@@ -953,7 +909,7 @@ void OverlayConnector::_sendGameWindowInput(std::uint32_t windowId, UINT msg, WP
 void OverlayConnector::_sendGraphicsWindowResizeEvent(HWND window, int width, int height)
 {
     overlay::GraphicsWindowRezizeEvent message;
-    message.window = (std::uint32_t)window;
+    message.window = (std::uint32_t)(std::uintptr_t)window;
     message.width = width;
     message.height = height;
 
@@ -963,7 +919,7 @@ void OverlayConnector::_sendGraphicsWindowResizeEvent(HWND window, int width, in
 void OverlayConnector::_sendGraphicsWindowFocusEvent(HWND window, bool focus)
 {
     overlay::GraphicsWindowFocusEvent message;
-    message.window = (std::uint32_t)window;
+    message.window = (std::uint32_t)(std::uintptr_t)window;
     message.focus = focus;
 
     _sendMessage(&message);
@@ -972,7 +928,7 @@ void OverlayConnector::_sendGraphicsWindowFocusEvent(HWND window, bool focus)
 void OverlayConnector::_sendGraphicsWindowDestroy(HWND window)
 {
     overlay::GraphicsWindowDestroyEvent message;
-    message.window = (std::uint32_t)window;
+    message.window = (std::uint32_t)(std::uintptr_t)window;
 
     _sendMessage(&message);
 }
@@ -1126,8 +1082,6 @@ void OverlayConnector::_onOverlayInit(std::shared_ptr<overlay::OverlayInit>& ove
     {
         HookApp::instance()->startHook();
     }
-
-    directMessageInput_ = overlayMsg->directMessageInput;
 
     shareMemoryLock_.open(Storm::Utils::fromUtf8(overlayMsg->shareMemMutex));
 

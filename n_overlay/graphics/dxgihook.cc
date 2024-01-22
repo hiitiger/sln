@@ -459,7 +459,6 @@ bool DXGIHook::hookCreateSwapChian()
     if (dxgiFactory1 && !createSwapChainHook_)
     {
 
-        const auto vtable = *reinterpret_cast<uintptr_t ***>(dxgiFactory1.get());
         DWORD_PTR *source_addr = getVFunctionAddr((DWORD_PTR *)dxgiFactory1.get(), 10);
         DWORD_PTR *hooked_addr = (DWORD_PTR *)H_CreateSwapChain;
 
@@ -544,6 +543,8 @@ bool DXGIHook::initGraphics(IDXGISwapChain *swap)
             this->dxgiGraphics_ = std::move(graphics);
             graphicsInit_ = true;
 
+            session::setGraphicsActive((int)GraphicsType::D3d12);
+
             __trace__ << "graphicsInit_ d3d12 swap: " << swap;
         }
     }
@@ -555,6 +556,8 @@ bool DXGIHook::initGraphics(IDXGISwapChain *swap)
         {
             this->dxgiGraphics_ = std::move(graphics);
             graphicsInit_ = true;
+            session::setGraphicsActive((int)GraphicsType::D3d11);
+
             __trace__ << "graphicsInit_ d3d11 swap: " << swap;
         }
     }
@@ -565,11 +568,12 @@ bool DXGIHook::initGraphics(IDXGISwapChain *swap)
         {
             this->dxgiGraphics_ = std::move(graphics);
             graphicsInit_ = true;
-            __trace__ << "graphicsInit_ d3d10";
+            session::setGraphicsActive((int)GraphicsType::D3d10);
+
+            __trace__ << "graphicsInit_ d3d10 swap: " << swap;
         }
     }
 
-    session::setGraphicsActive(graphicsInit_);
 
     if (graphicsInit_)
     {
@@ -586,7 +590,7 @@ void DXGIHook::uninitGraphics(IDXGISwapChain *swap)
     {
         swapChain_ = nullptr;
         dxgiGraphics_->uninitGraphics(swap);
-        session::setGraphicsActive(false);
+        session::unsetGraphicsActive();
         graphicsInit_ = false;
     }
 }
@@ -598,7 +602,7 @@ void DXGIHook::freeGraphics()
     if (graphicsInit_)
     {
         dxgiGraphics_->freeGraphics();
-        session::setGraphicsActive(false);
+        session::unsetGraphicsActive();
         graphicsInit_ = false;
         swapChain_ = nullptr;
     }

@@ -108,8 +108,11 @@ void setWindowThreadId(DWORD id);
 std::uint32_t graphicsThreadId();
 void setGraphicsThreadId(DWORD id);
 
-void setGraphicsActive(bool active);
+void setGraphicsActive(int graphics_type);
+void unsetGraphicsActive();
 bool graphicsActive();
+bool graphicsDetected();
+
 
 void setIsWindowed(bool windowed);
 bool isWindowed();

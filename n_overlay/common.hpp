@@ -16,6 +16,16 @@ enum class Graphics
     OpenGL = 16,
 };
 
+
+enum class GraphicsType : int
+{
+    D3d9 = 9,
+    D3d10 = 10,
+    D3d11 = 11,
+    D3d12 = 12,
+};
+
+
 enum class Threads
 {
     HookApp = 1,

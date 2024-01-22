@@ -233,7 +233,7 @@ int main()
 
         std::wstring windowHandle = cmdLine[1];
         std::wstring dll = cmdLine[2];
-        const HWND hwnd = (HWND)std::stoul(windowHandle);
+        const HWND hwnd = (HWND)(std::uintptr_t)std::stoul(windowHandle);
 
         if (hwnd)
         {

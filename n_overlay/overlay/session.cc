@@ -18,6 +18,8 @@ std::uint32_t graphicsThreadId_ = 0;
 overlay_game::D3d9HookInfo d3d9HookInfo_;
 overlay_game::DxgiHookInfo dxgiHookInfo_;
 
+std::uint32_t graphics_type_ = 0;
+
 std::atomic<bool> d3d9Hooked_ = false;
 std::atomic<bool> dxgiHooked_ = false;
 
@@ -230,14 +232,25 @@ HWND graphicsWindow()
     return g_graphicsWindow;
 }
 
-void setGraphicsActive(bool active)
+void setGraphicsActive(int graphics_type)
 {
-    graphicsActive_ = active;
+    graphicsActive_ = true;
+    graphics_type_ = graphics_type;
+}
+
+void unsetGraphicsActive()
+{
+    graphicsActive_ = false;   
 }
 
 bool graphicsActive()
 {
     return graphicsActive_;
+}
+
+bool graphicsDetected()
+{
+    return graphics_type_ != 0;
 }
 
 void setIsWindowed(bool windowed)

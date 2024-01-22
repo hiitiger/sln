@@ -6,8 +6,6 @@
 
 class OverlayConnector : public IIpcClient
 {
-    std::atomic<bool> directMessageInput_ = false;
-
     int ipcClientId_ = 0;
     IIpcLink *ipcLink_ = nullptr;
 
@@ -108,8 +106,6 @@ public:
 
     void lockWindows();
     void unlockWindows();
-
-    bool directMessageInput() const;
 
     bool processNCHITTEST(UINT message, WPARAM wParam, LPARAM lParam, bool isBlockingAll = true);
     bool processMouseMessage(UINT message, WPARAM wParam, LPARAM lParam, bool isBlockingAll = true);
