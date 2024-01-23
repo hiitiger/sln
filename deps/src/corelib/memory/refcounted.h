@@ -1,18 +1,5 @@
 #pragma once
 
-/*
-    侵入式引用计数
-    1. 侵入式引用计数 用在强制使用引用计数管理资源的场合
-    2. 提供接口的时候(COM 类似)
-
-    非侵入式引用计数
-    1. std::shared_ptr用在可以选择资源管理方式的场合
-    2. 资源不一定有明确的owner
-    
-    对象树
-    1. 资源拥有明确的owner
-*/
-
 namespace Storm {
 
     struct RefCountData

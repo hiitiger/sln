@@ -90,10 +90,10 @@ namespace Storm {
         
         void remove(const K& key);
 
+        class const_iterator;
         class iterator : public std::iterator<std::bidirectional_iterator_tag, V>
         {
-            friend class Skiplist<K, V>::const_iterator;
-            using const_iterator = typename Skiplist<K, V>::const_iterator;
+            friend class const_iterator;
             using Node = typename Skiplist::Node;
             Node* node = nullptr;
         public:

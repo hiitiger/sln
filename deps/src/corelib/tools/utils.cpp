@@ -21,7 +21,7 @@ namespace Storm {
 
     std::wstring Utils::fromLocal8Bit(const std::string& str)
     {
-        return fromLocal8Bit(str.c_str(), str.size());
+        return fromLocal8Bit(str.c_str(), (int)str.size());
     }
 
     std::string Utils::toLocal8Bit(const wchar_t* wstr, int size /*= -1*/)
@@ -57,7 +57,7 @@ namespace Storm {
 
     std::wstring Utils::fromUtf8(const std::string& str)
     {
-        return fromUtf8(str.c_str(), str.size());
+        return fromUtf8(str.c_str(), (int)str.size());
     }
 
     std::string Utils::toUtf8(const wchar_t* wstr, int size /*= -1*/)
@@ -116,7 +116,7 @@ namespace Storm {
     {
         unsigned int d = 0;
         unsigned int p = 1;
-        for (int i = h.size() - 1; i >= 0; --i)
+        for (auto i = h.size() - 1; i >= 0; --i)
         {
             d += p * _fromHex(h[i]);
             p *= 16;

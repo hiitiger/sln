@@ -751,7 +751,7 @@ void OverlayConnector::translateWindowsToGameClient()
 
 void OverlayConnector::translateWindowsToGameClient(const std::shared_ptr<overlay::Window>& window)
 {
-    auto screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    /*auto screenWidth = GetSystemMetrics(SM_CXSCREEN);
     auto screenHeight = GetSystemMetrics(SM_CYSCREEN);
     auto gameWidth = HookApp::instance()->uiapp()->gameWidth();
     auto gameHeight = HookApp::instance()->uiapp()->gameHeight();
@@ -762,7 +762,7 @@ void OverlayConnector::translateWindowsToGameClient(const std::shared_ptr<overla
     auto yscale = (float)gameHeight / (float)screenHeight;
 
     auto x = window->rect.x;
-    auto y = window->rect.y;
+    auto y = window->rect.y;*/
 
     //SetWindowPos((HWND)window->nativeHandle, nullptr, (int)(x * xscale), (int)(y * yscale), 0, 0, SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOZORDER);
 }
@@ -1088,6 +1088,8 @@ void OverlayConnector::_onOverlayInit(std::shared_ptr<overlay::OverlayInit>& ove
     std::vector<std::shared_ptr<overlay::Window>> windows;
     for (const auto& window : overlayMsg->windows)
     {
+        LOGGER("n_overlay") << "window: " << window.name;
+
         windows.emplace_back(std::make_shared<overlay::Window>(window));
         if (window.transparent)
         {
@@ -1111,6 +1113,9 @@ void OverlayConnector::_onOverlayEnable(std::shared_ptr<overlay::OverlayEnable>&
 void OverlayConnector::_onWindow(std::shared_ptr<overlay::Window>& overlayMsg)
 {
     {
+
+        LOGGER("n_overlay") << "window: " << overlayMsg->name;
+
         std::lock_guard<std::mutex> lock(windowsLock_);
         windows_.push_back(overlayMsg);
 

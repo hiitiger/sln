@@ -14,6 +14,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dx9app", "demo\dx9app\dx9ap
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Detours", "Detours\vc\Detours.vcxproj", "{AF219167-4D53-420D-8EB7-C302EABC0B50}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "corelib", "deps\src\corelib\corelib.vcxproj", "{76C85BFA-99B5-3DA3-8511-CD13F160502C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -70,6 +72,14 @@ Global
 		{AF219167-4D53-420D-8EB7-C302EABC0B50}.Release|Win32.Build.0 = Release|Win32
 		{AF219167-4D53-420D-8EB7-C302EABC0B50}.Release|x64.ActiveCfg = Release|x64
 		{AF219167-4D53-420D-8EB7-C302EABC0B50}.Release|x64.Build.0 = Release|x64
+		{76C85BFA-99B5-3DA3-8511-CD13F160502C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{76C85BFA-99B5-3DA3-8511-CD13F160502C}.Debug|Win32.Build.0 = Debug|Win32
+		{76C85BFA-99B5-3DA3-8511-CD13F160502C}.Debug|x64.ActiveCfg = Debug|x64
+		{76C85BFA-99B5-3DA3-8511-CD13F160502C}.Debug|x64.Build.0 = Debug|x64
+		{76C85BFA-99B5-3DA3-8511-CD13F160502C}.Release|Win32.ActiveCfg = Release|Win32
+		{76C85BFA-99B5-3DA3-8511-CD13F160502C}.Release|Win32.Build.0 = Release|Win32
+		{76C85BFA-99B5-3DA3-8511-CD13F160502C}.Release|x64.ActiveCfg = Release|x64
+		{76C85BFA-99B5-3DA3-8511-CD13F160502C}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -55,19 +55,20 @@ public:
         _postFun(std::move(callback));
     }
 
-    template<class Owner, class S, class ...A >
+   /* template<class Owner, class S, class ...A >
     void emitAsync(Owner* object, Event<S>* event,  A&&... args)
     {
+        typename priv::InvokerThisHolder<Owner>::Holder object_ = object;
         Callback0 eventCallback = Storm::bind(&Event<S>::operator(), event, std::forward<A>(args)...);
 
         Callback0 callback = [=]() {
-            if (object)
+            if (object_)
             {
                 eventCallback();
             }
         };
         _postFun(std::move(callback));
-    }
+    }*/
 
     template<class Owner, class S, class ...A >
     void emitAsync(const std::shared_ptr<Owner>& object, Event<S>* event, A&&... args)
