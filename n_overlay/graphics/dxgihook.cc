@@ -586,7 +586,10 @@ bool DXGIHook::initGraphics(IDXGISwapChain *swap)
 void DXGIHook::uninitGraphics(IDXGISwapChain *swap)
 {
     __trace__;
-    if (graphicsInit_ && swap == swapChain_)
+    DXGI_SWAP_CHAIN_DESC swapChainDesc;
+    HRESULT hr = swap->GetDesc(&swapChainDesc);
+
+    if (graphicsInit_ && (swap == swapChain_ || FAILED(hr) || swapChainDesc.OutputWindow == session::graphicsWindow()))
     {
         swapChain_ = nullptr;
         dxgiGraphics_->uninitGraphics(swap);
